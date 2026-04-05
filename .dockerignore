@@ -1,0 +1,64 @@
+# ===================
+# Build outputs
+# ===================
+target/
+frontend/node_modules/
+frontend/dist/
+dist/
+build/
+
+# ===================
+# IDE
+# ===================
+.idea/
+*.iml
+*.iws
+.vscode/
+.settings/
+.project
+.classpath
+
+# ===================
+# Git
+# ===================
+.git/
+.gitignore
+.gitattributes
+
+# ===================
+# Docker (avoid recursive)
+# ===================
+docker-compose*.yml
+Dockerfile*
+.dockerignore
+
+# ===================
+# Documentation (keep README for reference)
+# ===================
+docs/
+*.md
+!README.md
+
+# ===================
+# Logs & Temp
+# ===================
+*.log
+logs/
+*.tmp
+*.bak
+.cache/
+
+# ===================
+# Tests
+# ===================
+**/test/
+**/*Test.java
+**/*Tests.java
+coverage/
+
+# ===================
+# Environment
+# ===================
+.env
+.env.*
+*.local

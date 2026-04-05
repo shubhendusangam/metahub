@@ -1,0 +1,110 @@
+# =============================================================================
+# MetaHub — Full Stack Docker Compose
+# Start everything: docker compose up --build
+# =============================================================================
+#
+#   ┌──────────┐     ┌────────────────────────────────────────────┐
+#   │  Browser │────▶│  metahub-app (:3000)                       │
+#   └──────────┘     │  ┌─────────┐    ┌──────────────────────┐   │
+#                    │  │  Nginx  │───▶│  Spring Boot (:8080) │   │
+#                    │  │  (SPA)  │    │  (REST API)          │   │
+#                    │  └─────────┘    └──────────┬───────────┘   │
+#                    └────────────────────────────┼───────────────┘
+#                                       ┌─────────┴──────────┐
+#                                 ┌─────▼─────┐     ┌────────▼────────┐
+#                                 │ PostgreSQL│     │  Elasticsearch  │
+#                                 │   (:5432) │     │    (:9200)      │
+#                                 └───────────┘     └─────────────────┘
+#
+# Ports exposed to host:
+#   3000  → MetaHub app (frontend + API)
+#   5432  → PostgreSQL  (direct access)
+#   9200  → Elasticsearch (direct access)
+#   5601  → Kibana (ES dashboard)
+# =============================================================================
+
+version: '3.8'
+
+services:
+  # ── PostgreSQL ─────────────────────────────────────────────────────────────
+  postgres:
+    image: postgres:15-alpine
+    container_name: metahub-postgres
+    environment:
+      POSTGRES_DB: metahub
+      POSTGRES_USER: metahub
+      POSTGRES_PASSWORD: metahub
+    ports:
+      - "5432:5432"
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U metahub -d metahub"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 10s
+
+  # ── Elasticsearch ──────────────────────────────────────────────────────────
+  elasticsearch:
+    image: docker.elastic.co/elasticsearch/elasticsearch:8.13.0
+    container_name: metahub-elasticsearch
+    environment:
+      - discovery.type=single-node
+      - xpack.security.enabled=false
+      - "ES_JAVA_OPTS=-Xms512m -Xmx512m"
+    ports:
+      - "9200:9200"
+    volumes:
+      - esdata:/usr/share/elasticsearch/data
+    healthcheck:
+      test: ["CMD-SHELL", "curl -f http://localhost:9200/_cluster/health || exit 1"]
+      interval: 15s
+      timeout: 10s
+      retries: 5
+      start_period: 30s
+
+  # ── Kibana (optional — ES dashboard) ───────────────────────────────────────
+  kibana:
+    image: docker.elastic.co/kibana/kibana:8.13.0
+    container_name: metahub-kibana
+    environment:
+      ELASTICSEARCH_HOSTS: http://elasticsearch:9200
+    ports:
+      - "5601:5601"
+    depends_on:
+      elasticsearch:
+        condition: service_healthy
+
+  # ── MetaHub Application (backend + frontend) ──────────────────────────────
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: metahub-app
+    ports:
+      - "3000:80"
+    environment:
+      # Spring profile (docker = prod + auto DDL for fresh databases)
+      SPRING_PROFILES_ACTIVE: docker
+      # Database
+      DB_HOST: postgres
+      DB_PORT: 5432
+      DB_NAME: metahub
+      DB_USER: metahub
+      DB_PASSWORD: metahub
+      # Elasticsearch
+      ES_URIS: http://elasticsearch:9200
+      # JVM tuning
+      JAVA_OPTS: "-Xms256m -Xmx512m"
+    depends_on:
+      postgres:
+        condition: service_healthy
+      elasticsearch:
+        condition: service_healthy
+    restart: unless-stopped
+
+volumes:
+  pgdata:
+  esdata:
+
