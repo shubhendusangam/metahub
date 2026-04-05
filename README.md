@@ -719,11 +719,7 @@ metahub/
 ---
 
 ## 📐 Domain Model
-
-```
 <img width="641" height="573" alt="image" src="https://github.com/user-attachments/assets/a85b8ad8-147b-4ab5-bf04-9cc9af8c3aa7" />
-
-```
 
 ### Enumerations
 
