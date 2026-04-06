@@ -11,3 +11,6 @@ export const addLineageEdge = (data: {
   jobName?: string;
 }) => client.post('/lineage', data);
 
+export const deleteLineageEdge = (id: string) =>
+  client.delete<ApiResponse<void>>(`/lineage/${id}`);
+

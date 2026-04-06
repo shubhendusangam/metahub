@@ -55,6 +55,7 @@ public class LineageService {
     @Transactional(readOnly = true)
     public LineageGraphResponse getLineageGraph(UUID datasetId) {
         Set<UUID> visitedDatasets = new HashSet<>();
+        Set<UUID> visitedEdgeIds = new HashSet<>();
         List<DataLineage> allEdges = new ArrayList<>();
 
         // BFS in both directions
@@ -67,7 +68,7 @@ public class LineageService {
             List<DataLineage> edges = lineageRepository.findBySourceDatasetIdOrTargetDatasetId(currentId, currentId);
 
             for (DataLineage edge : edges) {
-                if (!allEdges.contains(edge)) {
+                if (visitedEdgeIds.add(edge.getId())) {
                     allEdges.add(edge);
                 }
                 UUID sourceId = edge.getSourceDataset().getId();

@@ -4,12 +4,12 @@ import com.metahub.dto.response.ApiResponse;
 import com.metahub.dto.response.BookmarkResponse;
 import com.metahub.dto.response.PagedResponse;
 import com.metahub.service.BookmarkService;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.Map;
 import java.util.UUID;
 
 @RestController
@@ -28,10 +28,9 @@ public class BookmarkController {
     }
 
     @PostMapping
-    public ResponseEntity<ApiResponse<BookmarkResponse>> add(@RequestBody Map<String, String> body) {
-        UUID userId = UUID.fromString(body.get("userId"));
-        UUID datasetId = UUID.fromString(body.get("datasetId"));
-        BookmarkResponse bookmark = bookmarkService.addBookmark(userId, datasetId);
+    public ResponseEntity<ApiResponse<BookmarkResponse>> add(
+            @Valid @RequestBody com.metahub.dto.request.BookmarkRequest request) {
+        BookmarkResponse bookmark = bookmarkService.addBookmark(request.getUserId(), request.getDatasetId());
         return ResponseEntity.status(HttpStatus.CREATED).body(ApiResponse.ok(bookmark, "Bookmarked"));
     }
 

@@ -53,7 +53,7 @@ export interface GovernancePolicy {
   description: string;
   rules: string;
   status: 'DRAFT' | 'ACTIVE' | 'ARCHIVED';
-  applicableDatasets: Dataset[];
+  applicableDatasets: { id: string; name: string; qualifiedName: string }[];
   createdAt: string;
   updatedAt: string;
 }
@@ -164,6 +164,17 @@ export interface Comment {
   datasetId: string;
   authorId: string;
   authorName: string;
+  createdAt: string;
+  updatedAt: string;
+}
+
+// --- Users ---
+export interface User {
+  id: string;
+  username: string;
+  email: string;
+  displayName: string;
+  role: 'ADMIN' | 'DATA_STEWARD' | 'VIEWER';
   createdAt: string;
   updatedAt: string;
 }

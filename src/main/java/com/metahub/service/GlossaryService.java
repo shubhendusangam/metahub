@@ -82,7 +82,8 @@ public class GlossaryService {
 
     @Transactional
     public void delete(UUID id) {
-        glossaryRepository.deleteById(id);
+        GlossaryTerm term = findOrThrow(id);
+        glossaryRepository.delete(term);
     }
 
     private GlossaryTerm findOrThrow(UUID id) {

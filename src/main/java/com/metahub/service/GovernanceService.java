@@ -58,7 +58,12 @@ public class GovernanceService {
         policy.setDescription(request.getDescription());
         policy.setRules(request.getRules());
         Optional.ofNullable(request.getStatus()).ifPresent(policy::setStatus);
-        
+
+        if (request.getDatasetIds() != null) {
+            Set<Dataset> datasets = new HashSet<>(datasetRepository.findAllById(request.getDatasetIds()));
+            policy.setApplicableDatasets(datasets);
+        }
+
         return toResponse(policyRepository.save(policy));
     }
 
@@ -79,7 +84,8 @@ public class GovernanceService {
 
     @Transactional
     public void delete(UUID id) {
-        policyRepository.deleteById(id);
+        GovernancePolicy policy = findOrThrow(id);
+        policyRepository.delete(policy);
     }
 
     // ========== Private Helper Methods ==========

@@ -1,8 +1,10 @@
 package com.metahub.controller;
 
+import com.metahub.dto.request.UserRequest;
 import com.metahub.dto.response.ApiResponse;
-import com.metahub.model.User;
+import com.metahub.dto.response.UserResponse;
 import com.metahub.service.UserService;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -19,24 +21,25 @@ public class UserController {
     private final UserService userService;
 
     @GetMapping
-    public ResponseEntity<ApiResponse<List<User>>> list() {
+    public ResponseEntity<ApiResponse<List<UserResponse>>> list() {
         return ResponseEntity.ok(ApiResponse.ok(userService.listAll()));
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<ApiResponse<User>> getById(@PathVariable UUID id) {
+    public ResponseEntity<ApiResponse<UserResponse>> getById(@PathVariable UUID id) {
         return ResponseEntity.ok(ApiResponse.ok(userService.getById(id)));
     }
 
     @PostMapping
-    public ResponseEntity<ApiResponse<User>> create(@RequestBody User user) {
-        User created = userService.create(user);
-        return ResponseEntity.status(HttpStatus.CREATED).body(ApiResponse.ok(created));
+    public ResponseEntity<ApiResponse<UserResponse>> create(@Valid @RequestBody UserRequest request) {
+        UserResponse created = userService.create(request);
+        return ResponseEntity.status(HttpStatus.CREATED).body(ApiResponse.ok(created, "User created"));
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<ApiResponse<User>> update(@PathVariable UUID id, @RequestBody User user) {
-        return ResponseEntity.ok(ApiResponse.ok(userService.update(id, user)));
+    public ResponseEntity<ApiResponse<UserResponse>> update(
+            @PathVariable UUID id, @Valid @RequestBody UserRequest request) {
+        return ResponseEntity.ok(ApiResponse.ok(userService.update(id, request)));
     }
 
     @DeleteMapping("/{id}")

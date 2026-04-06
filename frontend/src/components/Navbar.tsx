@@ -9,6 +9,8 @@ import {
   Activity,
   BookOpen,
   HelpCircle,
+  Server,
+  Users,
 } from 'lucide-react';
 
 const navItems = [
@@ -20,6 +22,8 @@ const navItems = [
   { to: '/quality', label: 'Quality', icon: BarChart3 },
   { to: '/activity', label: 'Activity', icon: Activity },
   { to: '/glossary', label: 'Glossary', icon: BookOpen },
+  { to: '/datasources', label: 'Data Sources', icon: Server },
+  { to: '/users', label: 'Users', icon: Users },
   { to: '/guide', label: 'User Guide', icon: HelpCircle },
 ];
 

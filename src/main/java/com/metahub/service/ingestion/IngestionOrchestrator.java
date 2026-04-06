@@ -5,6 +5,7 @@ import com.metahub.exception.IngestionException;
 import com.metahub.exception.ResourceNotFoundException;
 import com.metahub.model.DataSource;
 import com.metahub.model.Dataset;
+import com.metahub.model.SchemaDefinition;
 import com.metahub.repository.DataSourceRepository;
 import com.metahub.repository.DatasetRepository;
 import lombok.RequiredArgsConstructor;
@@ -49,8 +50,12 @@ public class IngestionOrchestrator {
             if (existing.isPresent()) {
                 Dataset existingDs = existing.get();
                 existingDs.setDescription(dataset.getDescription());
-                existingDs.setSchemas(dataset.getSchemas());
-                dataset.getSchemas().forEach(s -> s.setDataset(existingDs));
+                existingDs.getSchemas().clear();
+                for (SchemaDefinition schema : dataset.getSchemas()) {
+                    schema.setDataset(existingDs);
+                    schema.getColumns().forEach(col -> col.setSchema(schema));
+                    existingDs.getSchemas().add(schema);
+                }
                 Dataset saved = datasetRepository.save(existingDs);
                 eventPublisher.publishEvent(new MetadataChangeEvent(this, saved, MetadataChangeEvent.Action.UPDATED));
             } else {

@@ -19,6 +19,15 @@ export const createDataset = (data: {
 export const deleteDataset = (id: string) =>
   client.delete<ApiResponse<void>>(`/datasets/${id}`);
 
+export const updateDataset = (id: string, data: {
+  name: string;
+  qualifiedName: string;
+  description?: string;
+  dataSourceId?: string;
+  ownerId?: string;
+  tagNames?: string[];
+}) => client.put<ApiResponse<Dataset>>(`/datasets/${id}`, data);
+
 export const addTags = (id: string, tagNames: string[]) =>
   client.post<ApiResponse<Dataset>>(`/datasets/${id}/tags`, tagNames);
 

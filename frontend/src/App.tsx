@@ -9,6 +9,8 @@ import QualityPage from './pages/QualityPage';
 import ActivityPage from './pages/ActivityPage';
 import GlossaryPage from './pages/GlossaryPage';
 import GuidePage from './pages/GuidePage';
+import DataSourcesPage from './pages/DataSourcesPage';
+import UsersPage from './pages/UsersPage';
 
 export default function App() {
   return (
@@ -23,6 +25,8 @@ export default function App() {
         <Route path="/quality" element={<QualityPage />} />
         <Route path="/activity" element={<ActivityPage />} />
         <Route path="/glossary" element={<GlossaryPage />} />
+        <Route path="/datasources" element={<DataSourcesPage />} />
+        <Route path="/users" element={<UsersPage />} />
         <Route path="/guide" element={<GuidePage />} />
       </Routes>
     </Layout>

@@ -70,6 +70,9 @@ public class CommentService {
 
     @Transactional
     public void deleteComment(UUID commentId) {
+        if (!commentRepository.existsById(commentId)) {
+            throw new ResourceNotFoundException("Comment", "id", commentId);
+        }
         commentRepository.deleteById(commentId);
     }
 

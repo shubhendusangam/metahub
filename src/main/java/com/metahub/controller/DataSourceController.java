@@ -2,7 +2,7 @@ package com.metahub.controller;
 
 import com.metahub.dto.request.DataSourceRequest;
 import com.metahub.dto.response.ApiResponse;
-import com.metahub.model.DataSource;
+import com.metahub.dto.response.DataSourceResponse;
 import com.metahub.service.DataSourceService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -21,23 +21,23 @@ public class DataSourceController {
     private final DataSourceService dataSourceService;
 
     @GetMapping
-    public ResponseEntity<ApiResponse<List<DataSource>>> list() {
+    public ResponseEntity<ApiResponse<List<DataSourceResponse>>> list() {
         return ResponseEntity.ok(ApiResponse.ok(dataSourceService.listAll()));
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<ApiResponse<DataSource>> getById(@PathVariable UUID id) {
+    public ResponseEntity<ApiResponse<DataSourceResponse>> getById(@PathVariable UUID id) {
         return ResponseEntity.ok(ApiResponse.ok(dataSourceService.getById(id)));
     }
 
     @PostMapping
-    public ResponseEntity<ApiResponse<DataSource>> create(@Valid @RequestBody DataSourceRequest request) {
-        DataSource created = dataSourceService.create(request);
+    public ResponseEntity<ApiResponse<DataSourceResponse>> create(@Valid @RequestBody DataSourceRequest request) {
+        DataSourceResponse created = dataSourceService.create(request);
         return ResponseEntity.status(HttpStatus.CREATED).body(ApiResponse.ok(created, "DataSource created"));
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<ApiResponse<DataSource>> update(
+    public ResponseEntity<ApiResponse<DataSourceResponse>> update(
             @PathVariable UUID id, @Valid @RequestBody DataSourceRequest request) {
         return ResponseEntity.ok(ApiResponse.ok(dataSourceService.update(id, request)));
     }
